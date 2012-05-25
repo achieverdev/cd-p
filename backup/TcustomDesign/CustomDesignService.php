@@ -80,6 +80,7 @@ class CustomDesignService
 	
 	public function getProductCategrories()
 	{
+		/*
 		$this->connect();		
 		$query 			= "SELECT * FROM tbl_subcategories";
 		$result 		= (mysql_query($query)) or die ('getProductCategrories->query problem'.mysql_error()) ;	
@@ -101,7 +102,37 @@ class CustomDesignService
 		}	
 		mysql_free_result($result);
 				 
-	   return $recordObjArr;				
+	   return $recordObjArr;		   		
+	   */	
+	   
+	   $this->connect();		
+		$query 			= "SELECT * FROM tbl_categories";
+		$result 		= (mysql_query($query)) or die ('getProductCategrories->query problem'.mysql_error()) ;	
+		
+		$recordObjArr   = array();
+		while ($row 	= mysql_fetch_object($result)) 
+		{	
+			$fetchObj['id']						 	= $row->id;
+			$fetchObj['name'] 			 			= $row->name;
+			$fetchObj['description'] 			 	= $row->description;							
+			// sub  categories details
+			$subcategories_query  	= "SELECT * FROM tbl_subcategories WHERE category_id=$row->id";		
+			$subcategories_result 	= mysql_query($subcategories_query) or die ('getProductCategrories->subcategories_query'.mysql_error()) ;				
+			$sbucategores_record_arr = array();
+			while ($subcategories_row 	= mysql_fetch_object($subcategories_result)) 
+			{				
+				$subcategoriesItem['subcategories_id']		= $subcategories_row->id;	
+				$subcategoriesItem['subcategories_name']	= $subcategories_row->name;
+				$sbucategores_record_arr [] 			= $subcategoriesItem;			
+			}
+			mysql_free_result($subcategories_result);
+			
+			$fetchObj['subcategories_arr']				= 	$sbucategores_record_arr;	
+			$recordObjArr [] 				 	 		= $fetchObj;				
+		}	
+		mysql_free_result($result);
+				 
+	   return $recordObjArr;	
 	}
 	
 	public function getProductItem($param)
@@ -120,7 +151,7 @@ class CustomDesignService
 			$fetchObj['subcategories_id']			 = $row->subcategories_id;
 			$fetchObj['size_id']					 = $row->size_id;
 			$fetchObj['color_id']					 = $row->color_id;
-			$colorcode_query  = "SELECT code FROM tbl_color WHERE id=$row->color_id";		
+			$colorcode_query  						 = "SELECT code FROM tbl_color WHERE id=$row->color_id";		
 			$colorcode_result = (mysql_query($colorcode_query)) or die ('getProdcutColorOptions->colorcode_query'.mysql_error()) ;				
 			$colorcode_row 	  = mysql_fetch_object($colorcode_result);
 			$fetchObj['color_code']					 = $colorcode_row->code;	
