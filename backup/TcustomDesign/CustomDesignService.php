@@ -80,31 +80,6 @@ class CustomDesignService
 	
 	public function getProductCategrories()
 	{
-		/*
-		$this->connect();		
-		$query 			= "SELECT * FROM tbl_subcategories";
-		$result 		= (mysql_query($query)) or die ('getProductCategrories->query problem'.mysql_error()) ;	
-		
-		$recordObjArr   = array();
-		while ($row 	= mysql_fetch_object($result)) 
-		{	
-			$fetchObj['id']						 	= $row->id;
-			$fetchObj['name'] 			 			= $row->name;
-			$fetchObj['category_id'] 			 	= $row->category_id;
-			$fetchObj['description'] 			 	= $row->description;							
-			// categories details
-			$categories_query  	= "SELECT * FROM tbl_categories WHERE id=$row->category_id";		
-			$categories_result 	= mysql_query($categories_query) or die ('getProductCategrories->categories_query'.mysql_error()) ;				
-			$categories_row 	= mysql_fetch_object($categories_result);
-			$fetchObj['category_name']				= $categories_row->name;			
-						
-			$recordObjArr [] 				 	 	= $fetchObj;				
-		}	
-		mysql_free_result($result);
-				 
-	   return $recordObjArr;		   		
-	   */	
-	   
 	   $this->connect();		
 		$query 			= "SELECT * FROM tbl_categories";
 		$result 		= (mysql_query($query)) or die ('getProductCategrories->query problem'.mysql_error()) ;	
@@ -161,6 +136,51 @@ class CustomDesignService
 		mysql_free_result($result);
 				 
 	   return $recordObjArr;	
+	}
+	
+	public function getProductItems($param)
+	{
+		$this->connect();		
+		$query = "SELECT * FROM tbl_product WHERE subcategories_id=$param";
+		$result = (mysql_query($query)) or die ('getProductItems->query problem'.mysql_error()) ;	
+		
+		$recordObjArr = array();
+	        while ($row = mysql_fetch_object($result)) 
+			{	
+				$fetchObj['id']						 	 = $row->id;
+				$fetchObj['product_name'] 				 = $row->name;
+				
+				$colorvariant_query 			= "SELECT * FROM tbl_product_variant WHERE product_id= $row->id";
+				$colorvariant_result 			= (mysql_query($colorvariant_query)) or die ('getProductItems->colorvariant_query problem'.mysql_error()) ;
+				$colorvariant_objArr			= array();
+				while ($colorvariant_row 	= mysql_fetch_object($colorvariant_result)) 
+				{
+					$colorvariantObj['front_image'] 				 = 'assets/images/product/' 
+																		.$row->id .'/' 
+																		.$colorvariant_row->color_id .'/'
+																		.$colorvariant_row->front_image;
+					$colorvariantObj['back_image'] 				 	 = 'assets/images/product/' 
+																		.$row->id .'/' 
+																		.$colorvariant_row->color_id .'/'
+																		.$colorvariant_row->back_image;
+																		
+					$colorvariantObj['subcategories_id']			 = $colorvariant_row->subcategories_id;
+					$colorvariantObj['size_id']					 	 = $colorvariant_row->size_id;
+					$colorvariantObj['color_id']					 = $colorvariant_row->color_id;
+					
+					$colorcode_query  = "SELECT code FROM tbl_color WHERE id=$colorvariant_row->color_id";		
+					$colorcode_result = (mysql_query($colorcode_query)) or die ('getProductItems->colorcode_query'.mysql_error()) ;				
+					$colorcode_row 	  = mysql_fetch_object($colorcode_result);
+					$colorvariantObj['color_code']					 = $colorcode_row->code;
+					$colorvariant_objArr []							 = $colorvariantObj;					
+				}	
+				$fetchObj['iteminfo']								 = $colorvariant_objArr;			
+				$recordObjArr [] 				 	 	 			 = $fetchObj;				
+       		}
+	        
+			 mysql_free_result($result);
+				 
+	    return $recordObjArr;	
 	}
 	
     public function testMessage($param)
