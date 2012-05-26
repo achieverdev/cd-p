@@ -167,6 +167,7 @@ class CustomDesignService
 					$colorvariantObj['subcategories_id']			 = $colorvariant_row->subcategories_id;
 					$colorvariantObj['size_id']					 	 = $colorvariant_row->size_id;
 					$colorvariantObj['color_id']					 = $colorvariant_row->color_id;
+					$colorvariantObj['id']					 		 = $colorvariant_row->id;
 					
 					$colorcode_query  = "SELECT code FROM tbl_color WHERE id=$colorvariant_row->color_id";		
 					$colorcode_result = (mysql_query($colorcode_query)) or die ('getProductItems->colorcode_query'.mysql_error()) ;				
