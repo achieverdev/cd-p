@@ -64,7 +64,7 @@ class CustomDesignService
 				$fetchObj['back_image'] 				 = 'assets/images/product/' .$row->product_id .'/' .$row->color_id .'/'.$row->back_image;
 				$fetchObj['subcategories_id']			 = $row->subcategories_id;
 				$fetchObj['size_id']					 = $row->size_id;
-				$fetchObj['color_id']					 = $row->color_id;
+				$fetchObj['color_id']					 = $row->color_ifd;
 				$colorcode_query  = "SELECT code FROM tbl_color WHERE id=$row->color_id";		
 				$colorcode_result = (mysql_query($colorcode_query)) or die ('getProdcutColorOptions->colorcode_query'.mysql_error()) ;				
 				$colorcode_row 	  = mysql_fetch_object($colorcode_result);
@@ -182,6 +182,47 @@ class CustomDesignService
 			 mysql_free_result($result);
 				 
 	    return $recordObjArr;	
+	}
+	
+	/*
+		function : getArtImages() - images of arts  
+	*/
+	public function getArtImages()
+	{
+		$this->connect();		
+		$query 			= "SELECT * FROM tbl_artImages";
+		$result 		= (mysql_query($query)) or die ('getArtImages->query problem'.mysql_error()) ;	
+		
+		$recordObjArr   = array();
+		while ($row 	= mysql_fetch_object($result)) 
+		{	
+			if( $row->type == '0')
+			{
+				$fetchObj['id']						 	 = $row->id;
+				$fetchObj['name']						 = $row->name;
+				$fetchObj['path']						 = 'assets/images/arrow/'.$row->path;
+								
+				$recordObjArr [] 				 	 	 = $fetchObj;				
+			}
+		}	
+		mysql_free_result($result);
+				 
+	   return $recordObjArr;	
+	}
+	
+	public function insertUploadImageTodb($pathname)
+	{		
+		$this->connect();		
+		$query 			= "INSERT INTO tbl_artImages(name,path,type) VALUES ('arrow','$pathname','1')";
+		$result 		= (mysql_query($query)) or die ('upload->query problem'.mysql_error()) ;		
+		$returnId 		= mysql_insert_id();		
+		
+		$fetchObj['id']		= $returnId;
+		$fetchObj['name']	= 'arrow';
+		$fetchObj['path']	= $pathname;
+		$fetchObj['type']	= '1';	
+
+		return $fetchObj;		
 	}
 	
     public function testMessage($param)
