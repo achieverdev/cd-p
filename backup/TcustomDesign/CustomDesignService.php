@@ -225,6 +225,33 @@ class CustomDesignService
 		return $fetchObj;		
 	}
 	
+	public function getArtImageColorList($pathname)
+	{
+		$this->connect();		
+		$query 			= "SELECT * FROM tbl_artimages_variant  where art_id=$pathname"; 
+		$result 		= (mysql_query($query)) or die ('getArtImageColorList->query problem'.mysql_error()) ;	
+		
+		$recordObjArr   = array();
+		while ($row 	= mysql_fetch_object($result)) 
+		{				
+			$fetchObj['id']						 	 = $row->id;
+			$fetchObj['path']						 = 'assets/images/arrow/colors/'.$row->art_id.'/'.$row->path;
+			$fetchObj['color_id']					 = $row->color_id;
+			$fetchObj['art_id']					 	 = $row->art_id;
+			
+			$colorcode_query  = "SELECT code,name FROM tbl_color WHERE id=$row->color_id";		
+			$colorcode_result = (mysql_query($colorcode_query)) or die ('getArtImageColorList->colorcode_query'.mysql_error()) ;				
+			$colorcode_row 	  = mysql_fetch_object($colorcode_result);
+			$fetchObj['color_code']			 		= $colorcode_row->code;					
+			$fetchObj['color_name']			 		= $colorcode_row->name;					
+			
+			$recordObjArr [] 				 	 	 = $fetchObj;							
+		}	
+		mysql_free_result($result);
+				 
+	   return $recordObjArr;	
+	}
+	
     public function testMessage($param)
 	{
 		$this->connect();
