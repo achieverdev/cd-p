@@ -272,19 +272,60 @@ class CustomDesignService
 	}
 	
 	
-	public function saveProductState($param)
+	public function saveCustomProduct($param)
+	{
+		$this->connect();	
+		if($param[0]->id == '0')
+		{				
+			//$query 	= "INSERT INTO tbl_save_state(user_id,product_id,save_data,name) VALUES ($param[0]->userId,$param[0]->product_id,$param[0]->json,$param[0]->name)";
+			$userId_temp  		= $param[0]->userId;
+			$product_id_temp  	= $param[0]->product_id;
+			$json_temp  		= $param[0]->json;
+			$name_temp  		= $param[0]->name;
+			
+			$query 	= "INSERT INTO tbl_save_state(user_id,product_id,save_data,name) VALUES ('$userId_temp','$product_id_temp','$json_temp','$name_temp')";
+			$result 			= (mysql_query($query)) or die ('saveCustomProduct->query problem'.mysql_error()) ;				
+			$returnId 			= mysql_insert_id();		
+			
+			$fetchObj['id']		= $returnId;
+			
+			return $fetchObj;
+		}
+		else 
+		{
+			$recordId_temp  	= $param[0]->id;
+			$userId_temp  		= $param[0]->userId;
+			$json_temp  		= $param[0]->json;
+			$name_temp  		= $param[0]->name;
+			
+			//$query 	= "UPDATE tbl_save_state  SET save_data = '$json_temp'  WHERE id = '$recordId_temp'  ";			
+			$query 	= "UPDATE tbl_save_state  SET name = 'name'  WHERE id = '$recordId_temp'  ";			
+			$result 			= (mysql_query($query)) or die ('saveCustomProduct->query 2 problem'.mysql_error()) ;								
+			$fetchObj['id']		= $recordId_temp ;
+			return $recordId_temp;
+		}		
+		return 0;
+	}
+	
+	public function getSavedCustomProduct($param)
 	{
 		$this->connect();		
-		$query 			= "INSERT INTO tbl_artImages(name,path,type) VALUES ('arrow','$pathname','1')";
-		$result 		= (mysql_query($query)) or die ('upload->query problem'.mysql_error()) ;		
-		$returnId 		= mysql_insert_id();		
+		$query 			= "SELECT * FROM tbl_save_state where id=$param"; 
+		$result 		= (mysql_query($query)) or die ('getSavedCustomProduct->query problem'.mysql_error()) ;	
 		
-		$fetchObj['id']		= $returnId;
-		$fetchObj['name']	= 'arrow';
-		$fetchObj['path']	= $pathname;
-		$fetchObj['type']	= '1';	
-
-		return $fetchObj;
+		$recordObjArr   = array();
+		while ($row 	= mysql_fetch_object($result)) 
+		{	
+			$fetchObj['name']			 		= $row->name;					
+			$fetchObj['id']			 			= $row->id;					
+			$fetchObj['user_id']			 	= $row->user_id;	
+			$fetchObj['product_id'] 			= $row->product_id;	
+			$fetchObj['save_data'] 				= $row->save_data;		
+			$recordObjArr [] 				    = $fetchObj;							
+		}	
+		mysql_free_result($result);
+				 
+	   return $recordObjArr;	
 	}
 	
     public function testMessage($param)
