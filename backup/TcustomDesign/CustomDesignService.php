@@ -237,12 +237,12 @@ class CustomDesignService
 			$fetchObj['id']						 	 = $row->id;
 			$fetchObj['path']						 = 'assets/images/arrow/colors/'.$row->art_id.'/'.$row->path;
 			$fetchObj['color_id']					 = $row->color_id;
-			$fetchObj['art_id']					 	 = $row->art_id;
+			$lorcode_row 	  = mysql_fetch_object($colorcode_result);
+			$fefetchObj['art_id']					 	 = $row->art_id;
 			
 			$colorcode_query  = "SELECT code,name FROM tbl_color WHERE id=$row->color_id";		
 			$colorcode_result = (mysql_query($colorcode_query)) or die ('getArtImageColorList->colorcode_query'.mysql_error()) ;				
-			$colorcode_row 	  = mysql_fetch_object($colorcode_result);
-			$fetchObj['color_code']			 		= $colorcode_row->code;					
+			$cotchObj['color_code']			 		= $colorcode_row->code;					
 			$fetchObj['color_name']			 		= $colorcode_row->name;					
 			
 			$recordObjArr [] 				 	 	 = $fetchObj;							
@@ -250,6 +250,41 @@ class CustomDesignService
 		mysql_free_result($result);
 				 
 	   return $recordObjArr;	
+	}
+	
+	public function getColorList()
+	{
+		$this->connect();		
+		$query 			= "SELECT * FROM tbl_color"; 
+		$result 		= (mysql_query($query)) or die ('getColorList->query problem'.mysql_error()) ;	
+		
+		$recordObjArr   = array();
+		while ($row 	= mysql_fetch_object($result)) 
+		{	
+			$fetchObj['name']			 		= $row->name;					
+			$fetchObj['id']			 			= $row->id;					
+			$fetchObj['code']			 		= $row->code;					
+			$recordObjArr [] 				    = $fetchObj;							
+		}	
+		mysql_free_result($result);
+				 
+	   return $recordObjArr;	
+	}
+	
+	
+	public function saveProductState($param)
+	{
+		$this->connect();		
+		$query 			= "INSERT INTO tbl_artImages(name,path,type) VALUES ('arrow','$pathname','1')";
+		$result 		= (mysql_query($query)) or die ('upload->query problem'.mysql_error()) ;		
+		$returnId 		= mysql_insert_id();		
+		
+		$fetchObj['id']		= $returnId;
+		$fetchObj['name']	= 'arrow';
+		$fetchObj['path']	= $pathname;
+		$fetchObj['type']	= '1';	
+
+		return $fetchObj;
 	}
 	
     public function testMessage($param)
