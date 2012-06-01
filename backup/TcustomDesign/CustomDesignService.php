@@ -328,6 +328,8 @@ class CustomDesignService
 	   return $recordObjArr;	
 	}
 	
+
+	
 	public function getSavedProductByUser($param)
 	{
 		$this->connect();		
@@ -348,6 +350,50 @@ class CustomDesignService
 				 
 	   return $recordObjArr;	
 	}
+	
+	public function getAllProductItems()
+	{
+		$this->connect();		
+		$query = "SELECT * FROM tbl_product_variant WHERE product_id";
+		$result = (mysql_query($query)) or die ('getAllProductItems->query problem'.mysql_error()) ;	
+		
+		$recordObjArr = array();
+	        while ($row = mysql_fetch_object($result)) 
+			{					
+								
+				$fetchObj['front_image'] 				 = 'assets/images/product/' 
+																	.$row->id .'/' 
+																	.$row->color_id .'/'
+																	.$row->front_image;
+																	
+				$fetchObj['back_image'] 				 = 'assets/images/product/' 
+																	.$row->id .'/' 
+																	.$row->color_id .'/'
+																	.$row->back_image;
+																	
+				$fetchObj['subcategories_id']			 = $row->subcategories_id;
+				$fetchObj['size_id']					 = $row->size_id;
+				$fetchObj['color_id']					 = $row->color_id;
+				$fetchObj['id']					 		 = $row->id;
+				
+				$colorcode_query  = "SELECT code,name FROM tbl_color WHERE id=$row->color_id";		
+				$colorcode_result = (mysql_query($colorcode_query)) or die ('getAllProductItems->colorcode_query'.mysql_error()) ;				
+				$colorcode_row 	  = mysql_fetch_object($colorcode_result);
+				$fetchObj['color_code']			 		= $colorcode_row->code;		
+				$fetchObj['color_name']			 		= $colorcode_row->name;		
+				
+				$subcategoryname_query  = "SELECT name FROM tbl_subcategories WHERE id=$row->subcategories_id";		
+				$subcategoryname_result = (mysql_query($subcategoryname_query)) or die ('getAllProductItems->subcategoryname_query'.mysql_error()) ;				
+				$subcategoryname_row 	= mysql_fetch_object($subcategoryname_result);				
+				$fetchObj['subcategories_name']			= $subcategoryname_row->name;		
+
+				$recordObjArr [] 				 	 	= $fetchObj;				
+       		}	        
+			 mysql_free_result($result);
+				 
+	    return $recordObjArr;	
+	}
+	
 	
     public function testMessage($param)
 	{
