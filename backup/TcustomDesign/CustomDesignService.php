@@ -328,6 +328,27 @@ class CustomDesignService
 	   return $recordObjArr;	
 	}
 	
+	public function getSavedProductByUser($param)
+	{
+		$this->connect();		
+		$query 			= "SELECT * FROM tbl_save_state where user_id=$param"; 
+		$result 		= (mysql_query($query)) or die ('getSavedCustomProduct->query problem'.mysql_error()) ;	
+		
+		$recordObjArr   = array();
+		while ($row 	= mysql_fetch_object($result)) 
+		{	
+			$fetchObj['name']			 		= $row->name;					
+			$fetchObj['id']			 			= $row->id;					
+			$fetchObj['user_id']			 	= $row->user_id;	
+			$fetchObj['product_id'] 			= $row->product_id;	
+			$fetchObj['save_data'] 				= $row->save_data;		
+			$recordObjArr [] 				    = $fetchObj;							
+		}	
+		mysql_free_result($result);
+				 
+	   return $recordObjArr;	
+	}
+	
     public function testMessage($param)
 	{
 		$this->connect();
