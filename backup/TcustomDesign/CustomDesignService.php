@@ -288,6 +288,7 @@ class CustomDesignService
 			$returnId 			= mysql_insert_id();		
 			
 			$fetchObj['id']		= $returnId;
+			$fetchObj['name']	= $param[0]->name;
 			
 			return $fetchObj;
 		}
@@ -298,11 +299,13 @@ class CustomDesignService
 			$json_temp  		= $param[0]->json;
 			$name_temp  		= $param[0]->name;
 			
-			//$query 	= "UPDATE tbl_save_state  SET save_data = '$json_temp'  WHERE id = '$recordId_temp'  ";			
-			$query 	= "UPDATE tbl_save_state  SET name = 'name'  WHERE id = '$recordId_temp'  ";			
+			$query 	= "UPDATE tbl_save_state  SET save_data = '$json_temp'  WHERE id = '$recordId_temp'  ";			
+			//$query 	= "UPDATE tbl_save_state  SET name = 'name'  WHERE id = '$recordId_temp'  ";			
 			$result 			= (mysql_query($query)) or die ('saveCustomProduct->query 2 problem'.mysql_error()) ;								
 			$fetchObj['id']		= $recordId_temp ;
-			return $recordId_temp;
+			$fetchObj['name']	= $name_temp ;
+			
+			return $fetchObj;
 		}		
 		return 0;
 	}
